@@ -17,36 +17,43 @@ const copyDir = () => {
     fs.readdir(folderPath, { withFileTypes: true }, (err, files) => {
       if (err) {
         console.log(err);
-      }
-      files.forEach((file) => {
-        const filePath = path.join(folderPath, file.name);
-        const copyFilePath = path.join(copyFolderPath, file.name);
+      } else {
+        files.forEach((file) => {
+          const filePath = path.join(folderPath, file.name);
+          const copyFilePath = path.join(copyFolderPath, file.name);
 
-        fs.copyFile(filePath, copyFilePath, (err) => {
-          if (err) {
-            console.log(err);
-          }
+          fs.copyFile(filePath, copyFilePath, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
         });
-      });
+      }
     });
   };
 
   const deleteFiles = () => {
     fs.readdir(copyFolderPath, { withFileTypes: true }, (err, copies) => {
-      copies.forEach((copy) => {
-        const fileInFolder = path.join(folderPath, copy.name);
-        const copyInFolder = path.join(copyFolderPath, copy.name);
+      if (err) {
+        console.log(err);
+      } else {
+        if (copies.length !== 0) {
+          copies.forEach((copy) => {
+            const fileInFolder = path.join(folderPath, copy.name);
+            const copyInFolder = path.join(copyFolderPath, copy.name);
 
-        fs.access(fileInFolder, fs.constants.F_OK, (err) => {
-          if (err) {
-            fs.rm(copyInFolder, { force: true }, (err) => {
+            fs.access(fileInFolder, fs.constants.F_OK, (err) => {
               if (err) {
-                console.log(err);
+                fs.rm(copyInFolder, { force: true }, (err) => {
+                  if (err) {
+                    console.log(err);
+                  }
+                });
               }
             });
-          }
-        });
-      });
+          });
+        }
+      }
     });
   };
 
